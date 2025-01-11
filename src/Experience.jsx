@@ -1,4 +1,5 @@
 import { Text, Html, ContactShadows, PresentationControls, Float, Environment, useGLTF } from '@react-three/drei';
+import { FaGithub } from "react-icons/fa";
 
 export default function Experience() {
     const computer = useGLTF('/static/scene.glb');
@@ -34,12 +35,16 @@ export default function Experience() {
                     >
                         <Html
                             transform
-                            wrapperClass="htmlScreen"
+                            wrapperClass="gitIcon"
                             distanceFactor={1.17}
-                            position={[0, 1.56, - 1.4]}
-                            rotation-x={- 0.256}
+                            position={[-0.9, 1.7, -2.3]}
+                            rotation-x={-0.256}
+                            onClick={() => window.open("https://github.com/Spoon221", "_blank")}
                         >
-                            <iframe src="https://bruno-simon.com/html/" />
+                            <div style={{ textAlign: 'center', cursor: 'pointer' }}>
+                                <FaGithub size={50} color="#ffffff" /> { }
+                                <p style={{ margin: 0, color: '#ffffff', fontSize: '14px' }}>GitHub</p> {/* Надпись под иконкой */}
+                            </div>
                         </Html>
                     </primitive>
 
