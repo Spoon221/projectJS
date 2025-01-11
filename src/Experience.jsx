@@ -39,12 +39,18 @@ export default function Experience() {
                             distanceFactor={1.17}
                             position={[-0.9, 1.7, -2.3]}
                             rotation-x={-0.256}
-                            onClick={() => window.open("https://github.com/Spoon221", "_blank")}
                         >
-                            <div style={{ textAlign: 'center', cursor: 'pointer' }}>
-                                <FaGithub size={50} color="#ffffff" /> { }
-                                <p style={{ margin: 0, color: '#ffffff', fontSize: '14px' }}>GitHub</p> {/* Надпись под иконкой */}
-                            </div>
+                            <a
+                                href="https://github.com/Spoon221"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ textDecoration: 'none', color: 'inherit' }}
+                            >
+                                <div style={{ textAlign: 'center', cursor: 'pointer' }}>
+                                    <FaGithub size={50} color="#ffffff" /> {}
+                                    <p style={{ margin: 0, color: '#ffffff', fontSize: '14px' }}>GitHub</p> {/* Надпись под иконкой */}
+                                </div>
+                            </a>
                         </Html>
                     </primitive>
 
