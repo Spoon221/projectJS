@@ -1,3 +1,7 @@
+@font-face {
+  font-family: 'Bangers';
+  src: url('/public/bangers-v20-latin-regular.woff') format('woff');
+}
 html,
 body,
 #root {
@@ -100,4 +104,115 @@ body,
   
 .game-over button:hover {
     background-color: #3e8e41;
+  }
+
+  .start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #241a1a;
+    color: #ffffff;
+    font-family: 'Bangers';
+  }
+  
+  .start-button {
+    padding: 15px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #ff6900; /* Оранжевый цвет, как в Experience */
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    font-family: 'Bangers';
+  }
+  
+  .start-button:hover {
+    background-color: #e65c00; /* Темнее оранжевый при наведении */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+  }
+  
+  .start-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  .loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #241a1a;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    font-family: 'Bangers';
+  }
+  
+  .loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #241a1a;
+    color: #ffffff;
+    font-family: 'Bangers';
+  }
+  
+  .loading-text {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .loading-dots {
+    display: flex;
+    justify-content: space-between;
+    width: 100px;
+  }
+  
+  .loading-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    animation: loading-dot 1s infinite;
+  }
+  
+  .loading-dot:nth-child(1) {
+    animation-delay: 0s;
+  }
+  
+  .loading-dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .loading-dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  
+  @keyframes loading-dot {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
