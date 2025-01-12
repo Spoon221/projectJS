@@ -1,19 +1,19 @@
-import { Html } from '@react-three/drei';
+import { Html, Text } from '@react-three/drei';
 import { useState, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 
 const points = [
     {
         position: [0.7, -0.9, 0.5],
-        text: "Здесь можно зарядиться энергией"
+        text: "Это первая точка. Здесь можно написать что-то важное."
     },
     {
         position: [0.9, -0.9, -0.5],
-        text: "Здесь повышаем жизни"
+        text: "Вторая точка. Текст появляется при наведении."
     },
     {
         position: [-0.8, -1, -0.7],
-        text: "Здесь зарабатываем деньги"
+        text: "Третья точка. Наведите курсор, чтобы увидеть текст."
     }
 ];
 
@@ -21,8 +21,14 @@ const TrianglePlayer = () => {
     const [targetPosition, setTargetPosition] = useState(points[0].position);
     const [currentPosition, setCurrentPosition] = useState(points[0].position);
     const [hoveredIndex, setHoveredIndex] = useState(null);
+    const [textColor, setTextColor] = useState("#7777FF"); // Цвет текста
+    const [circleColor, setCircleColor] = useState("#ff7777"); // Цвет круга
+    const [triangle, setTriangleColor] = useState("#77ff77"); // Цвет треугольника
 
     const triangleRef = useRef();
+    const textRef = useRef();
+
+    const { camera } = useThree(); // Получаем доступ к камере
 
     useFrame(() => {
         // Плавное перемещение треугольника к целевой позиции
@@ -32,6 +38,11 @@ const TrianglePlayer = () => {
         );
         setCurrentPosition(newPosition);
         triangleRef.current.position.set(...newPosition);
+
+        // Поворот текста "you" в сторону камеры
+        if (textRef.current) {
+            textRef.current.lookAt(camera.position); // Поворачиваем текст к камере
+        }
     });
 
     const handleCircleClick = (index) => {
@@ -49,8 +60,8 @@ const TrianglePlayer = () => {
                         onPointerEnter={() => setHoveredIndex(index)}
                         onPointerLeave={() => setHoveredIndex(null)}
                     >
-                        <sphereGeometry args={[0.1, 16, 16]} />
-                        <meshBasicMaterial color="white" />
+                        <sphereGeometry args={[0.04, 16, 16]} />
+                        <meshBasicMaterial color={circleColor} /> {/* Цвет круга из переменной */}
                     </mesh>
 
                     {/* Текст */}
@@ -63,10 +74,23 @@ const TrianglePlayer = () => {
             ))}
 
             {/* Треугольник */}
-            <mesh ref={triangleRef}>
+            <mesh ref={triangleRef} rotation={[Math.PI, 0, 0]}>
                 <coneGeometry args={[0.1, 0.2, 16]} />
-                <meshBasicMaterial color="red" />
+                <meshBasicMaterial color={triangle} />
             </mesh>
+
+            {/* Надпись "you" над треугольником */}
+            <Text
+                font="./bangers-v20-latin-regular.woff"
+                ref={textRef}
+                position={[currentPosition[0], currentPosition[1] + 0.3, currentPosition[2]]} // Позиция немного выше треугольника
+                fontSize={0.1} // Размер текста
+                color={textColor} // Цвет текста из переменной
+                anchorX="center" // Центрирование по оси X
+                anchorY="middle" // Центрирование по оси Y
+            >
+                you
+            </Text>
         </>
     );
 };
