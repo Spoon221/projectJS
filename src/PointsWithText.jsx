@@ -18,27 +18,82 @@ const StatsDisplay = ({ health, money, fatigue }) => (
 );
 
 const TrianglePlayer = () => {
-    const [stats, setStats] = useState({ health: 100, money: 500, fatigue: 0 });
+    const [stats, setStats] = useState({ health: 100, money: 100, fatigue: 0 });
     const [targetPosition, setTargetPosition] = useState(points[0].position);
     const [currentPosition, setCurrentPosition] = useState(points[0].position);
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [currentPointIndex, setCurrentPointIndex] = useState(0);
+    const [gameOver, setGameOver] = useState(false);
 
     const triangleRef = useRef();
     const textRef = useRef();
 
     const { camera } = useThree();
 
-    useFrame(() => {
-        const lerpFactor = 0.1;
-        const newPosition = currentPosition.map((coord, index) =>
-            coord + (targetPosition[index] - coord) * lerpFactor
-        );
-        setCurrentPosition(newPosition);
-        triangleRef.current.position.set(...newPosition);
+    useEffect(() => {
+        if (!gameOver) {
+            const interval = setInterval(() => {
+                setStats(prevStats => {
+                    let newHealth = prevStats.health;
+                    let newMoney = prevStats.money;
+                    let newFatigue = prevStats.fatigue;
+    
+                    // Если на точке 1, уменьшаем усталость на 2
+                    if (currentPointIndex === 0) {
+                        newFatigue = Math.max(0, prevStats.fatigue - 2);
+                    }
+    
+                    // Если на точке 2, увеличиваем здоровье на 2 и уменьшаем деньги на 1
+                    if (currentPointIndex === 1) {
+                        newHealth = Math.min(100, prevStats.health + 2);
+                        newMoney = Math.max(0, prevStats.money - 2); 
+                    }
+    
+                    // Если на точке 3, увеличиваем деньги на 2
+                    if (currentPointIndex === 2) {
+                        newMoney = Math.min(101, prevStats.money + 3);
+                    }
+    
+                    // Уменьшаем здоровье и деньги каждую секунду, если не на точке 1
+                    if (currentPointIndex !== 1) {
+                        newHealth = Math.max(0, newHealth - 2);
+                        newMoney = Math.max(0, newMoney - 2);
+                    }
+    
+                    // Увеличиваем усталость каждую секунду
+                    newFatigue = Math.min(100, newFatigue + 3);
+    
+                    return {
+                        health: newHealth,
+                        money: newMoney,
+                        fatigue: newFatigue,
+                    };
+                });
+            }, 1000);
+    
+            return () => clearInterval(interval);
+        }
+    }, [currentPointIndex, gameOver]);
 
-        if (textRef.current) {
-            textRef.current.lookAt(camera.position);
+    useEffect(() => {
+        if (stats.health <= 0 || stats.fatigue >= 100 || stats.money <= 0) {
+            // Окончание игры
+            setGameOver(true);
+        }
+    }, [stats]);
+
+    useFrame(() => {
+        if (triangleRef.current && points[currentPointIndex]) {
+            const lerpFactor = 0.1;
+            const newPosition = currentPosition.map((coord, index) =>
+                coord + (points[currentPointIndex].position[index] - coord) * lerpFactor
+            );
+            setCurrentPosition(newPosition);
+            triangleRef.current.position.set(...newPosition);
+
+            if (textRef.current) {
+                textRef.current.lookAt(camera.position);
+            }
         }
     });
 
@@ -70,52 +125,27 @@ const TrianglePlayer = () => {
         }
     };
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setStats(prevStats => {
-                let newHealth = prevStats.health;
-                let newMoney = prevStats.money;
-                let newFatigue = prevStats.fatigue;
-
-                // Если на точке 1, уменьшаем усталость на 2
-                if (currentPointIndex === 0) {
-                    newFatigue = Math.max(0, prevStats.fatigue - 2);
-                }
-
-                // Если на точке 2, увеличиваем здоровье на 2
-                if (currentPointIndex === 1) {
-                    newHealth = Math.min(100, prevStats.health + 2);
-                }
-
-                // Если на точке 3, увеличиваем деньги на 2
-                if (currentPointIndex === 2) {
-                    newMoney = Math.min(1000, prevStats.money + 2);
-                }
-
-                // Уменьшаем здоровье и деньги каждую секунду, если не на точке 2
-                if (currentPointIndex !== 1) {
-                    newHealth = Math.max(0, newHealth - 1);
-                    newMoney = Math.max(0, newMoney - 1);
-                }
-
-                // Увеличиваем усталость каждую секунду
-                newFatigue = Math.min(100, newFatigue + 1);
-
-                return {
-                    health: newHealth,
-                    money: newMoney,
-                    fatigue: newFatigue,
-                };
-            });
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, [currentPointIndex]);
+    const handleRestart = () => {
+        setStats({ health: 100, money: 100, fatigue: 0 });
+        setCurrentPointIndex(0);
+        setCurrentPosition(points[0].position);
+        setGameOver(false);
+    };
 
     return (
         <>
-            <StatsDisplay health={stats.health} money={stats.money} fatigue={stats.fatigue} />
-
+            <StatsDisplay {...stats} />
+            <Html position={[0, 0, 0]} style={{ opacity: 1, transition: 'opacity 0.3s' }}>
+                {gameOver ? (
+                    <div className="game-over">
+                        <h1>Game Over</h1>
+                        <p>Вы проиграли!</p>
+                        <button onClick={handleRestart}>Перезапустить уровень</button>
+                    </div>
+                ) : (
+                    <div />
+                )}
+            </Html>
             {points.map((point, index) => (
                 <group key={index}>
                     <mesh
@@ -125,9 +155,8 @@ const TrianglePlayer = () => {
                         onPointerLeave={() => setHoveredIndex(null)}
                     >
                         <sphereGeometry args={[0.04, 16, 16]} />
-                        <meshBasicMaterial color="#ff777" />
+                        <meshBasicMaterial color="#ff7777" />
                     </mesh>
-
                     <Html position={point.position} style={{ opacity: hoveredIndex === index ? 1 : 0, transition: 'opacity 0.3s' }}>
                         <div className="point-text">
                             {point.text}
@@ -135,12 +164,10 @@ const TrianglePlayer = () => {
                     </Html>
                 </group>
             ))}
-
-            <mesh ref={triangleRef} rotation={[Math.PI, 0, 0]}>
+            <mesh ref={triangleRef} rotation={[Math.PI, 0, 0]} position={currentPosition}>
                 <coneGeometry args={[0.1, 0.2, 16]} />
                 <meshBasicMaterial color="#77ff77" />
             </mesh>
-
             <Text
                 font="./bangers-v20-latin-regular.woff"
                 ref={textRef}
