@@ -45,3 +45,16 @@ body,
 .point-text.hide {
     opacity: 0;
 }
+
+.stats-container {
+    position: absolute;
+    bottom: -555px;
+    left: 400px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    width: 80px;
+}

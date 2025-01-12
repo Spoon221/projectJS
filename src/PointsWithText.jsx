@@ -1,59 +1,86 @@
 import { Html, Text } from '@react-three/drei';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 
 const points = [
-    {
-        position: [0.7, -0.9, 0.5],
-        text: "Это первая точка. Здесь можно написать что-то важное."
-    },
-    {
-        position: [0.9, -0.9, -0.5],
-        text: "Вторая точка. Текст появляется при наведении."
-    },
-    {
-        position: [-0.8, -1, -0.7],
-        text: "Третья точка. Наведите курсор, чтобы увидеть текст."
-    }
+    { position: [0.7, -0.9, 0.5], text: "Это первая точка." },
+    { position: [0.9, -0.9, -0.5], text: "Вторая точка." },
+    { position: [-0.8, -1, -0.7], text: "Третья точка." }
 ];
 
+const StatsDisplay = ({ health, money, fatigue }) => (
+    <Html position={[0, 0, 0]}>
+        <div className="stats-container">
+            <div>Health: {health} Money: {money}</div>
+            <div>Fatigue: {fatigue}</div>
+        </div>
+    </Html>
+);
+
 const TrianglePlayer = () => {
+    const [stats, setStats] = useState({ health: 100, money: 500, fatigue: 0 });
     const [targetPosition, setTargetPosition] = useState(points[0].position);
     const [currentPosition, setCurrentPosition] = useState(points[0].position);
     const [hoveredIndex, setHoveredIndex] = useState(null);
-    const [textColor, setTextColor] = useState("#7777FF"); // Цвет текста
-    const [circleColor, setCircleColor] = useState("#ff7777"); // Цвет круга
-    const [triangle, setTriangleColor] = useState("#77ff77"); // Цвет треугольника
 
     const triangleRef = useRef();
     const textRef = useRef();
 
-    const { camera } = useThree(); // Получаем доступ к камере
+    const { camera } = useThree();
 
     useFrame(() => {
-        // Плавное перемещение треугольника к целевой позиции
         const lerpFactor = 0.1;
-        const newPosition = currentPosition.map((coord, index) => 
+        const newPosition = currentPosition.map((coord, index) =>
             coord + (targetPosition[index] - coord) * lerpFactor
         );
         setCurrentPosition(newPosition);
         triangleRef.current.position.set(...newPosition);
 
-        // Поворот текста "you" в сторону камеры
         if (textRef.current) {
-            textRef.current.lookAt(camera.position); // Поворачиваем текст к камере
+            textRef.current.lookAt(camera.position);
         }
     });
 
     const handleCircleClick = (index) => {
         setTargetPosition(points[index].position);
+
+        switch (index) {
+            case 0:
+                setStats(prevStats => ({
+                    ...prevStats,
+                    money: prevStats.money + 2,
+                    fatigue: Math.max(0, prevStats.fatigue - 2),
+                }));
+                break;
+            case 1:
+                setStats(prevStats => ({
+                    ...prevStats,
+                    health: Math.min(100, prevStats.health + 2),
+                }));
+                break;
+            default:
+                break;
+        }
     };
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setStats(prevStats => ({
+                health: Math.max(0, prevStats.health - 1),
+                money: Math.max(0, prevStats.money - 2),
+                fatigue: Math.min(100, prevStats.fatigue + 2),
+            }));
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <>
+            <StatsDisplay health={stats.health} money={stats.money} fatigue={stats.fatigue} />
+
             {points.map((point, index) => (
                 <group key={index}>
-                    {/* Круг */}
                     <mesh
                         position={point.position}
                         onClick={() => handleCircleClick(index)}
@@ -61,10 +88,9 @@ const TrianglePlayer = () => {
                         onPointerLeave={() => setHoveredIndex(null)}
                     >
                         <sphereGeometry args={[0.04, 16, 16]} />
-                        <meshBasicMaterial color={circleColor} /> {/* Цвет круга из переменной */}
+                        <meshBasicMaterial color="#ff7777" />
                     </mesh>
 
-                    {/* Текст */}
                     <Html position={point.position} style={{ opacity: hoveredIndex === index ? 1 : 0, transition: 'opacity 0.3s' }}>
                         <div className="point-text">
                             {point.text}
@@ -73,21 +99,19 @@ const TrianglePlayer = () => {
                 </group>
             ))}
 
-            {/* Треугольник */}
             <mesh ref={triangleRef} rotation={[Math.PI, 0, 0]}>
                 <coneGeometry args={[0.1, 0.2, 16]} />
-                <meshBasicMaterial color={triangle} />
+                <meshBasicMaterial color="#77ff77" />
             </mesh>
 
-            {/* Надпись "you" над треугольником */}
             <Text
                 font="./bangers-v20-latin-regular.woff"
                 ref={textRef}
-                position={[currentPosition[0], currentPosition[1] + 0.3, currentPosition[2]]} // Позиция немного выше треугольника
-                fontSize={0.1} // Размер текста
-                color={textColor} // Цвет текста из переменной
-                anchorX="center" // Центрирование по оси X
-                anchorY="middle" // Центрирование по оси Y
+                position={[currentPosition[0], currentPosition[1] + 0.3, currentPosition[2]]}
+                fontSize={0.1}
+                color="#7777FF"
+                anchorX="center"
+                anchorY="middle"
             >
                 you
             </Text>
