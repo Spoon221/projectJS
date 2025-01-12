@@ -1,5 +1,7 @@
 import { Text, Html, ContactShadows, PresentationControls, Float, Environment, useGLTF } from '@react-three/drei';
 import { FaGithub } from "react-icons/fa";
+import SnowParticles from './SnowParticles';
+import PointsWithText from './PointsWithText';
 
 export default function Experience() {
     const computer = useGLTF('/static/scene.glb');
@@ -47,7 +49,7 @@ export default function Experience() {
                                 style={{ textDecoration: 'none', color: 'inherit' }}
                             >
                                 <div style={{ textAlign: 'center', cursor: 'pointer' }}>
-                                    <FaGithub size={50} color="#ffffff" /> {}
+                                    <FaGithub size={50} color="#ffffff" /> { }
                                     <p style={{ margin: 0, color: '#ffffff', fontSize: '14px' }}>GitHub</p> {/* Надпись под иконкой */}
                                 </div>
                             </a>
@@ -62,15 +64,16 @@ export default function Experience() {
                         maxWidth={2}
                     >
                         Evgenii Simakov
-                    </ Text>
+                    </Text>
+                    <SnowParticles count={1000} radius={2} position={[2, 0.75, 0.75]} />
                 </Float>
             </PresentationControls>
-
+            <PointsWithText />
             <ContactShadows
                 position-y={-1.4}
-                opacity={0.4}
-                scale={5}
-                blur={2.4}
+                opacity={0.8}
+                scale={7}
+                blur={3.5}
             />
         </>
     );

@@ -1,7 +1,6 @@
 html,
 body,
-#root
-{
+#root {
     position: fixed;
     top: 0;
     left: 0;
@@ -10,16 +9,39 @@ body,
     background: ivory;
 }
 
-.r3f
-{
+.r3f {
     touch-action: none;
 }
 
-.htmlScreen iframe
-{
+.htmlScreen iframe {
     width: 1024px;
     height: 670px;
     border: none;
     border-radius: 20px;
     background: #000000;
+}
+
+.point-text {
+    position: absolute;
+    top: 30px;
+    left: -120px;
+    width: 200px;
+    padding: 20px;
+    border-radius: 4px;
+    background: #00000077;
+    border: 1px solid #ffffff77;
+    color: #ffffff;
+    line-height: 1.3em;
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 100;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.point-text.show {
+    opacity: 1;
+}
+
+.point-text.hide {
+    opacity: 0;
 }

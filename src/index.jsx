@@ -6,37 +6,46 @@ import Experience from './Experience.jsx';
 
 const root = ReactDOM.createRoot(document.querySelector('#root'));
 
-function CameraControls() {
-    const { camera } = useThree();
-
-    const { positionX, positionY, positionZ, rotationX, rotationY, rotationZ } = useControls('Camera', {
-        positionX: { value: -3, min: -10, max: 10, step: 0.1 },
-        positionY: { value: 1.5, min: -10, max: 10, step: 0.1 },
-        positionZ: { value: 4, min: -10, max: 10, step: 0.1 },
-        rotationX: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01 },
-        rotationY: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01 },
-        rotationZ: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01 },
+function StatsControls() {
+    const { health, money, fatigue } = useControls('Stats', {
+        health: { value: 100, min: 0, max: 100, step: 1 },
+        money: { value: 500, min: 0, max: 10000, step: 10 },
+        fatigue: { value: 0, min: 0, max: 100, step: 1 },
     });
 
-    useFrame(() => {
-        camera.position.set(positionX, positionY, positionZ);
-        camera.rotation.set(rotationX, rotationY, rotationZ);
-    });
-
-    return null; 
+    return (
+        <div style={{
+            position: 'absolute',
+            bottom: 10,
+            right: 10,
+            color: 'white',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            padding: '10px',
+            borderRadius: '5px',
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '14px'
+        }}>
+            <div>Health: {health}</div>
+            <div>Money: {money}</div>
+            <div>Fatigue: {fatigue}</div>
+        </div>
+    );
 }
 
 root.render(
-    <Canvas
-        className="r3f"
-        camera={{
-            fov: 45,
-            near: 0.1,
-            far: 2000,
-            position: [-4, -0.4, 0], // Устанавливаем позицию камеры
-            rotation: [0, -1.4, 0], // Устанавливаем вращение камеры
-        }}
-    >
-        <Experience />
-    </Canvas>
+    <>
+        <Canvas
+            className="r3f"
+            camera={{
+                fov: 45,
+                near: 0.1,
+                far: 2000,
+                position: [-4, -0.4, 0],
+                rotation: [0, -1.4, 0],
+            }}
+        >
+            <Experience />
+        </Canvas>
+        <StatsControls />
+    </>
 );
