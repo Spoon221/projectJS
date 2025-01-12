@@ -22,6 +22,7 @@ const TrianglePlayer = () => {
     const [targetPosition, setTargetPosition] = useState(points[0].position);
     const [currentPosition, setCurrentPosition] = useState(points[0].position);
     const [hoveredIndex, setHoveredIndex] = useState(null);
+    const [currentPointIndex, setCurrentPointIndex] = useState(0);
 
     const triangleRef = useRef();
     const textRef = useRef();
@@ -43,12 +44,12 @@ const TrianglePlayer = () => {
 
     const handleCircleClick = (index) => {
         setTargetPosition(points[index].position);
+        setCurrentPointIndex(index);
 
         switch (index) {
             case 0:
                 setStats(prevStats => ({
                     ...prevStats,
-                    money: prevStats.money + 2,
                     fatigue: Math.max(0, prevStats.fatigue - 2),
                 }));
                 break;
@@ -58,6 +59,12 @@ const TrianglePlayer = () => {
                     health: Math.min(100, prevStats.health + 2),
                 }));
                 break;
+            case 2:
+                setStats(prevStats => ({
+                    ...prevStats,
+                    money: Math.max(0, prevStats.money - 2),
+                }));
+                break;
             default:
                 break;
         }
@@ -65,15 +72,45 @@ const TrianglePlayer = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setStats(prevStats => ({
-                health: Math.max(0, prevStats.health - 1),
-                money: Math.max(0, prevStats.money - 2),
-                fatigue: Math.min(100, prevStats.fatigue + 2),
-            }));
+            setStats(prevStats => {
+                let newHealth = prevStats.health;
+                let newMoney = prevStats.money;
+                let newFatigue = prevStats.fatigue;
+
+                // Если на точке 1, уменьшаем усталость на 2
+                if (currentPointIndex === 0) {
+                    newFatigue = Math.max(0, prevStats.fatigue - 2);
+                }
+
+                // Если на точке 2, увеличиваем здоровье на 2
+                if (currentPointIndex === 1) {
+                    newHealth = Math.min(100, prevStats.health + 2);
+                }
+
+                // Если на точке 3, увеличиваем деньги на 2
+                if (currentPointIndex === 2) {
+                    newMoney = Math.min(1000, prevStats.money + 2);
+                }
+
+                // Уменьшаем здоровье и деньги каждую секунду, если не на точке 2
+                if (currentPointIndex !== 1) {
+                    newHealth = Math.max(0, newHealth - 1);
+                    newMoney = Math.max(0, newMoney - 1);
+                }
+
+                // Увеличиваем усталость каждую секунду
+                newFatigue = Math.min(100, newFatigue + 1);
+
+                return {
+                    health: newHealth,
+                    money: newMoney,
+                    fatigue: newFatigue,
+                };
+            });
         }, 1000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [currentPointIndex]);
 
     return (
         <>
@@ -88,7 +125,7 @@ const TrianglePlayer = () => {
                         onPointerLeave={() => setHoveredIndex(null)}
                     >
                         <sphereGeometry args={[0.04, 16, 16]} />
-                        <meshBasicMaterial color="#ff7777" />
+                        <meshBasicMaterial color="#ff777" />
                     </mesh>
 
                     <Html position={point.position} style={{ opacity: hoveredIndex === index ? 1 : 0, transition: 'opacity 0.3s' }}>
