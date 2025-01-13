@@ -4,17 +4,21 @@ import { FaGithub } from "react-icons/fa";
 import SnowParticles from './SnowParticles';
 import PointsWithText from './PointsWithText';
 
-export default function Experience() {
-    const computer = useGLTF('/static/scene.glb');
-    const [showHints, setShowHints] = useState(true);
-    const [isLoading, setIsLoading] = useState(true);
-
+export default function GameExperience() {
+    const gameComputerModel = useGLTF('/static/scene.glb');
+    const [showPointsHints, setShowPointsHints] = useState(true);
+    const [isGameLoading, setIsGameLoading] = useState(true);
+    
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            setIsLoading(false);
-        }, 3000);
+        const handleGameLoading = () => {
+            const timeout = setTimeout(() => {
+                setIsGameLoading(false);
+            }, 3000);
 
-        return () => clearTimeout(timeout);
+            return () => clearTimeout(timeout);
+        };
+
+        handleGameLoading();
     }, []);
 
     return (
@@ -45,7 +49,7 @@ export default function Experience() {
                                 />
 
                                 <primitive
-                                    object={computer.scene}
+                                    object={gameComputerModel.scene}
                                     position-y={-1.2}
                                     rotation-x={-0.14}
                                 >
@@ -70,7 +74,7 @@ export default function Experience() {
                                     </Html>
                                 </primitive>
 
-                                <Text
+                                <GameTitle
                                     font="./bangers-v20-latin-regular.woff"
                                     fontSize={1}
                                     position={[2, 0.75, 0.75]}
@@ -78,13 +82,17 @@ export default function Experience() {
                                     maxWidth={2}
                                 >
                                     Evgenii Simakov
-                                </Text>
+                                </GameTitle>
                                 <SnowParticles count={1000} radius={2} position={[2, 0.75, 0.75]} />
                             </Float>
                         </PresentationControls>
-                        <PointsWithText showHints={showHints} />
+                        <PointsWithText showHints={showPointsHints} />
                     </>
                 )}
         </>
     );
+}
+
+function GameTitle(props) {
+    return <Text {...props} />;
 }

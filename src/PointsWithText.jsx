@@ -1,11 +1,13 @@
 import { Html, Text } from '@react-three/drei';
 import { useState, useRef, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
+import sound0 from './static/foot.mp3';
+import backgroundMusic from './static/fon.mp3';
 
 const points = [
-    { position: [0.7, -0.9, 0.5], text: "Это первая точка." },
-    { position: [0.9, -0.9, -0.5], text: "Вторая точка." },
-    { position: [-0.8, -1, -0.7], text: "Третья точка." }
+    { position: [0.7, -0.9, 0.5], text: "This is a place to recharge your energy." },
+    { position: [0.9, -0.9, -0.5], text: "Here, you can restore your life." },
+    { position: [-0.8, -1, -0.7], text: "In this spot, you can earn money." }
 ];
 
 const StatsDisplay = ({ health, money, fatigue, timeElapsed }) => (
@@ -30,6 +32,21 @@ const TrianglePlayer = () => {
     const textRef = useRef();
 
     const { camera } = useThree();
+
+    useEffect(() => {
+        const audio = new Audio(backgroundMusic);
+        audio.volume = 0.5;
+        audio.loop = true;
+    
+        audio.play().catch(error => {
+            console.error("Failed to play background music:", error);
+        });
+    
+        return () => {
+            audio.pause();
+            audio.currentTime = 0;
+        };
+    }, []);
 
     useEffect(() => {
         if (!gameOver) {
@@ -109,29 +126,33 @@ const TrianglePlayer = () => {
 
     const handleCircleClick = (index) => {
         setCurrentPointIndex(index);
-
+        const audio0 = new Audio(sound0);
         switch (index) {
             case 0:
                 setStats(prevStats => ({
                     ...prevStats,
                     fatigue: Math.max(0, prevStats.fatigue - 2),
                 }));
+                audio0.play()
                 break;
             case 1:
                 setStats(prevStats => ({
                     ...prevStats,
                     health: Math.min(100, prevStats.health + 2),
                 }));
+                audio0.play()
                 break;
             case 2:
                 setStats(prevStats => ({
                     ...prevStats,
                     money: Math.max(0, prevStats.money - 2),
                 }));
+                audio0.play()
                 break;
             default:
                 break;
         }
+
     };
 
     const handleRestart = () => {
@@ -145,7 +166,7 @@ const TrianglePlayer = () => {
     return (
         <>
             <StatsDisplay health={stats.health} money={stats.money} fatigue={stats.fatigue} timeElapsed={timeElapsed} />
-            <Html position={[0, 0, 0]} style={{ opacity: 1, transition: 'opacity 0.3s' }}>
+            <Html position={[0, 0, -0.5]} style={{ opacity: 1, transition: 'opacity 0.3s' }}>
                 {gameOver ? (
                     <div className="game-over">
                         <h1>Game Over</h1>
