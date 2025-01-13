@@ -30,7 +30,16 @@ const App = () => {
 
                 </div>
             ) : (
-                <Suspense fallback={<LoadingScreen />}>
+                <Suspense fallback={
+                    <div className="loading-screen">
+                        <div className="loading-text">Loading</div>
+                        <div className="loading-circle">
+                            <div className="loading-circle-dot"></div>
+                            <div className="loading-circle-dot"></div>
+                            <div className="loading-circle-dot"></div>
+                        </div>
+                    </div>
+                }>
                     <Canvas
                         className="r3f"
                         camera={{
@@ -46,19 +55,6 @@ const App = () => {
                 </Suspense>
             )}
         </>
-    );
-};
-
-const LoadingScreen = () => {
-    return (
-        <div className="loading-screen">
-            <div className="loading-text">Loading</div>
-            <div className="loading-circle">
-                <div className="loading-circle-dot"></div>
-                <div className="loading-circle-dot"></div>
-                <div className="loading-circle-dot"></div>
-            </div>
-        </div>
     );
 };
 
