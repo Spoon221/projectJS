@@ -8,7 +8,7 @@ export default function GameExperience() {
     const gameComputerModel = useGLTF('/static/scene.glb');
     const [showPointsHints, setShowPointsHints] = useState(true);
     const [isGameLoading, setIsGameLoading] = useState(true);
-    
+
     useEffect(() => {
         const handleGameLoading = () => {
             const timeout = setTimeout(() => {
@@ -83,6 +83,13 @@ export default function GameExperience() {
                                 >
                                     Evgenii Simakov
                                 </GameTitle>
+                                <Text
+                                    font="./bangers-v20-latin-regular.woff"
+                                    fontSize={0.1} position={[-1.05, -1.2, -0.65]}
+                                    rotation-y={-1.5}
+                                    maxWidth={4} >
+                                    Made on React & THREE JS
+                                </Text>
                                 <SnowParticles count={1000} radius={2} position={[2, 0.75, 0.75]} />
                             </Float>
                         </PresentationControls>
