@@ -10,11 +10,12 @@ const SnowParticles = ({ count = 1000, radius = 2 }) => {
     const particles = useMemo(() => {
         const positions = new Float32Array(count * 3);
         for (let i = 0; i < count; i++) {
-            const angle = Math.random() * Math.PI * 2; // Случайный угол
-            const distance = Math.sqrt(Math.random()) * radius; // Случайное расстояние
-            positions[i * 3] = Math.cos(angle) * distance; // X
-            positions[i * 3 + 1] = Math.random() * radius * 2; // Y
-            positions[i * 3 + 2] = Math.sin(angle) * distance; // Z
+            const x = Math.random() * radius * 2 - radius; // Случайная координата X
+            const y = Math.random() * radius * 2; // Случайная координата Y
+            const z = Math.random() * radius * 2 - radius; // Случайная координата Z
+            positions[i * 3] = x; // X
+            positions[i * 3 + 1] = y; // Y
+            positions[i * 3 + 2] = z; // Z
         }
         return positions;
     }, [count, radius]);

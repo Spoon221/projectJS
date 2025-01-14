@@ -17,10 +17,10 @@ const App = () => {
                     <div className="game-description">
                         <h1 className="custom-font1">Survival Game</h1>
                         <p className="custom-font">
-                            Your mission is to survive for as long as you can! You have three key parameters to monitor: Life, Health, and Fatigue. Keep these levels above the minimum to stay alive and thriving.
+                        Your mission is to survive for as long as you can! You have three key parameters to monitor: Life, Health, and Fatigue. Keep these levels above the minimum to stay alive and thriving. Be smart with your resources and make strategic choices to maximize your survival time. Every decision counts—stay alert and adapt to the challenges ahead!
                         </p>
                         <p className="custom-font">
-                            Be smart with your resources and make strategic choices to maximize your survival time. Every decision counts—stay alert and adapt to the challenges ahead!
+                        Every 10 seconds, the game will become more challenging! Be prepared for new trials: increasing levels of fatigue, unexpected enemy attacks, or resource shortages. Keep an eye on your parameters and make decisions quickly to avoid critical situations!
                         </p>
                         <button className="start-button" onClick={() => setShowExperience(true)}>
                             Start
